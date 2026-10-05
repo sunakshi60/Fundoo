@@ -14,10 +14,12 @@ namespace RepositoryLayer.Service
     public class UserRL : IUserRL
     {
         FundooContext fundooContext;
+        private readonly PasswordHasher<UserEntity> _passwordHasher;
 
         public UserRL(FundooContext fundooContext)
         {
             this.fundooContext = fundooContext;
+            _passwordHasher = new PasswordHasher<UserEntity>();
         }
 
         public ResponseModel< RegistrationModel> RegisterUserRL(RegistrationModel registrationModel)
@@ -68,43 +70,29 @@ namespace RepositoryLayer.Service
             return response;
         }
 
-        public ResponseModel<LoginModel> LoginUserRL(LoginModel login)
+        public UserEntity LoginUserRL(LoginModel model)
         {
-            ResponseModel<LoginModel> response = new ResponseModel<LoginModel>();
-
-            var user = fundooContext.Users.FirstOrDefault(x => x.Email == login.email);
+            var user = fundooContext.Users.FirstOrDefault(x => x.Email == model.email);
 
             if (user == null)
             {
-                response.IsSuccess = false;
-                response.Message = "Login failed due to invalid email or password.";
-                response.Data = null;
-
-                return response;
+                return null;
             }
 
-            PasswordHasher<UserEntity> passwordHasher = new PasswordHasher<UserEntity>();
+            var result = _passwordHasher.VerifyHashedPassword(
+                user,
+                user.Password,
+                model.password
+            );
 
-            var passwordResult = passwordHasher.VerifyHashedPassword(user, user.Password, login.password);
-
-            if (passwordResult == PasswordVerificationResult.Success)
+            if (result == PasswordVerificationResult.Failed)
             {
-                response.IsSuccess = true;
-                response.Message = "Login Successful";
-                response.Data = new LoginModel
-                {
-                    email = user.Email,
-                    password = "hidden content"
-                };
-            }    
-            else
-            {
-                response.IsSuccess = false;
-                response.Message = "Login failed due to Invalid email or password";
-                response.Data = null;
+                return null;
             }
-            return response;
+
+            return user;
         }
+
 
         public List<UserEntity> GetAllUsersRL()
         {

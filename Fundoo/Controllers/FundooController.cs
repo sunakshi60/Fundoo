@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
 using BussinessLayer.Interface;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ModelLayer.Model;
 
 namespace FundooPractice.Controllers
@@ -31,16 +32,17 @@ namespace FundooPractice.Controllers
         [HttpPost("Login")]
         public IActionResult LoginUser(LoginModel loginModel)
         {
-            var result = _userBL.LoginUserBL(loginModel);
+            var response = _userBL.LoginUserBL(loginModel);
 
-            if (!result.IsSuccess)
+            if (!response.IsSuccess)
             {
-                return Unauthorized(result);
+                return Unauthorized(response);
             }
 
-            return Ok(result);
+            return Ok(response);
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult GetAllUsers()
         {

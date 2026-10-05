@@ -13,10 +13,12 @@ namespace BussinessLayer.Service
     public class UserBL : IUserBL
     {
         private readonly IUserRL _userRL;
+        private readonly IJwtService _jwtService;
 
-        public UserBL(IUserRL _userRL)
+        public UserBL(IUserRL _userRL, IJwtService jwtService)
         {
             this._userRL = _userRL;
+            _jwtService = jwtService;
         }
 
         public ResponseModel <RegistrationModel> RegisterUserBL(RegistrationModel registrationModel)
@@ -24,9 +26,36 @@ namespace BussinessLayer.Service
             return _userRL.RegisterUserRL(registrationModel);
         }
 
-        public ResponseModel<LoginModel>LoginUserBL(LoginModel login)
+        public ResponseModel<LoginResponseModel> LoginUserBL(LoginModel model)
         {
-            return _userRL.LoginUserRL(login);
+            var user = _userRL.LoginUserRL(model);
+
+            if (user == null)
+            {
+                return new ResponseModel<LoginResponseModel>
+                {
+                    IsSuccess = false,
+                    Message = "Invalid email or password",
+                    Data = null
+                };
+            }
+
+            var token = _jwtService.GenerateToken(
+                user.UserId,
+                user.Email
+            );
+
+            return new ResponseModel<LoginResponseModel>
+            {
+                IsSuccess = true,
+                Message = "Login successful",
+                Data = new LoginResponseModel
+                {
+                    Token = token,
+                    UserId = user.UserId,
+                    Email = user.Email
+                }
+            };
         }
 
         public List<UserEntity> GetAllUsersBL()

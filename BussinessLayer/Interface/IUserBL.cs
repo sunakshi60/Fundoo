@@ -12,7 +12,7 @@ namespace BussinessLayer.Interface
     {
         ResponseModel<RegistrationModel> RegisterUserBL(RegistrationModel registrationModel);
 
-        ResponseModel<LoginModel> LoginUserBL(LoginModel login);
+        ResponseModel<LoginResponseModel> LoginUserBL(LoginModel model);
 
         List<UserEntity> GetAllUsersBL();
 
