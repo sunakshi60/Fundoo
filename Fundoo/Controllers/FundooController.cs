@@ -87,5 +87,53 @@ namespace FundooPractice.Controllers
 
             return Ok("User deleted successfully");
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
+        {
+            var result = await _userBL.ForgotPassword(model);
+
+            if (!result)
+            {
+                return BadRequest("Email not found");
+            }
+
+            return Ok("Password reset link sent to your email");
+        }
+
+
+        [Authorize]
+        [HttpPost("reset-password")]
+        public IActionResult ResetPassword(ResetPasswordModel model)
+        {
+            var tokenType = User.FindFirst("TokenType")?.Value;
+
+            if (tokenType != "PasswordReset")
+            {
+                return Forbid();
+            }
+
+            var authHeader = Request.Headers["Authorization"].ToString();
+
+            if (string.IsNullOrEmpty(authHeader))
+            {
+                return Unauthorized();
+            }
+
+            var token = authHeader.Replace("Bearer ", "");
+
+            var result = _userBL.ResetPassword(
+                token,
+                model.NewPassword
+            );
+
+            if (!result)
+            {
+                return BadRequest("Invalid or expired reset token");
+            }
+
+            return Ok("Password reset successfully");
+        }
+
     }
 }

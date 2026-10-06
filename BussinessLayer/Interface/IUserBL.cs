@@ -1,5 +1,6 @@
 ﻿using ModelLayer.Model;
 using RepositoryLayer.Entity;
+using System.Security.Cryptography;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,5 +23,8 @@ namespace BussinessLayer.Interface
 
         bool DeleteUserBL(int userId);
 
+        Task<bool> ForgotPassword(ForgotPasswordModel model);
+
+        bool ResetPassword(string token,string newPassword);
     }
 }

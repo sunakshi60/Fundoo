@@ -55,5 +55,36 @@ namespace BussinessLayer.Service
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        public string GenerateResetToken(int userId, string email)
+        {
+            var claims = new[]
+            {
+            new Claim("UserId", userId.ToString()),
+            new Claim("Email", email),
+            new Claim("TokenType", "PasswordReset")
+            };
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    _configuration["Jwt:Key"]!
+                )
+            );
+
+            var credentials = new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha256
+            );
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(15),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }

@@ -21,5 +21,10 @@ namespace RepositoryLayer.Interface
 
         bool DeleteUserRL(int userId);
 
+        UserEntity GetUserByEmail(string email);
+
+        bool SaveResetToken(string email, string token, DateTime expiry);
+
+        bool ResetPassword(string token, string newPassword);
     }
 }

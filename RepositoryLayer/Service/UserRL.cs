@@ -145,5 +145,52 @@ namespace RepositoryLayer.Service
 
             return true;
         }
+
+        public UserEntity GetUserByEmail(string email)
+        {
+            return fundooContext.Users.FirstOrDefault(x => x.Email == email);
+        }
+
+        public bool SaveResetToken(string email, string token, DateTime expiry)
+        {
+            var user = fundooContext.Users
+                .FirstOrDefault(x => x.Email == email);
+
+            if (user == null)
+                return false;
+
+            user.ResetToken = token;
+            user.ResetTokenExpiry = expiry;
+
+            fundooContext.SaveChanges();
+
+            return true;
+        }
+
+        public bool ResetPassword(string token, string newPassword)
+        {
+            var user = fundooContext.Users
+                .FirstOrDefault(x =>
+                    x.ResetToken == token &&
+                    x.ResetTokenExpiry > DateTime.UtcNow);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var passwordHasher = new PasswordHasher<UserEntity>();
+
+            user.Password = passwordHasher.HashPassword(
+                    user,
+                    newPassword);
+
+            user.ResetToken = null;
+            user.ResetTokenExpiry = null;
+
+            fundooContext.SaveChanges();
+
+            return true;
+        }
     }
 }

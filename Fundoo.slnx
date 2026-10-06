@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Messaging/">
+    <Project Path="MessageService/MessageService.csproj" Id="7f1006c8-8b40-40f9-ada9-d001c0cf015a" />
+  </Folder>
   <Project Path="BussinessLayer/BussinessLayer.csproj" />
   <Project Path="Fundoo/Fundoo.csproj" />
   <Project Path="ModelLayer/ModelLayer.csproj" />

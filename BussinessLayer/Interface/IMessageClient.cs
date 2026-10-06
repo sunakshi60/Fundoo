@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace BussinessLayer.Interface
 {
-    public interface IJwtService
+    public interface IMessageClient
     {
-        string GenerateToken(int userId, string email);
-
-        string GenerateResetToken(int userId, string email);
+        Task SendEmailAsync(string email, string subject, string body);
     }
 }
