@@ -113,15 +113,14 @@ namespace BussinessLayer.Service
 
             var body = $@"
         <h2>Password Reset Request</h2>
-        <p>Your password reset token is:</p>
+        <p>Hello {user.FirstName},Your password reset token is:</p>
 
         <p>
             <strong>{token}</strong>
         </p>
 
         <p>This token is valid for 15 minutes to authorize.</p>
-
-        
+        <p>If you did not request a password reset, you can ignore this email.</p>      
     ";
 
             await _messageClient.SendEmailAsync(
