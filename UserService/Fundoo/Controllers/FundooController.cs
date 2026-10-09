@@ -6,7 +6,7 @@ using ModelLayer.Model;
 namespace FundooPractice.Controllers
 {
     [ApiController]
-    [Route("api/s1[controller]")]
+    [Route("api/[controller]")]
     public class FundooController : ControllerBase
     {
         private IUserBL _userBL;
