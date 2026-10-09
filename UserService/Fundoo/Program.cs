@@ -30,6 +30,18 @@ namespace FundooPractice
             });
             builder.Services.AddEndpointsApiExplorer();
 
+            // CORS Implementation
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("https://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            });
+
+            // Swagger configuration 
             builder.Services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -63,6 +75,7 @@ namespace FundooPractice
                 client.BaseAddress = new Uri("https://localhost:7222/");
             });
 
+            // Jwt configuration
             var jwtSettings = builder.Configuration.GetSection("Jwt");
 
             var key = jwtSettings["Key"];
@@ -91,6 +104,7 @@ namespace FundooPractice
                 };
             });
 
+
             builder.Services.AddAuthorization();
 
             var app = builder.Build();
@@ -105,6 +119,8 @@ namespace FundooPractice
             
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowFrontend");
 
             app.UseAuthentication();
             app.UseAuthorization();
