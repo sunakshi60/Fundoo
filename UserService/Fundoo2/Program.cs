@@ -118,7 +118,7 @@ namespace FundooPractice
 
             
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseCors("AllowFrontend");
 
