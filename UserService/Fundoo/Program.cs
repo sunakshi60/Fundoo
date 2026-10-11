@@ -18,12 +18,41 @@ namespace FundooPractice
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var envConnectionString = Environment.GetEnvironmentVariable(
+                "ConnectionStrings__FundooConnection"
+             );
+
+            Console.WriteLine(
+                $"[ENV CHECK] Variable exists: {envConnectionString != null}"
+            );
+
+            Console.WriteLine(
+                $"[ENV CHECK] Variable is empty: {string.IsNullOrWhiteSpace(envConnectionString)}"
+            );
+
             // Add services to the container.
 
             builder.Services.AddControllers();
             builder.Services.AddScoped<IUserBL, UserBL>();
             builder.Services.AddScoped<IUserRL, UserRL>();
             builder.Services.AddScoped<IJwtService, JwtService>();
+
+
+            var dbConnectionString =
+                builder.Configuration.GetConnectionString("FundooConnection");
+
+            Console.WriteLine(
+                $"[CONFIG CHECK] ConnectionString is null: {dbConnectionString == null}"
+            );
+
+            Console.WriteLine(
+                $"[CONFIG CHECK] ConnectionString is empty: {string.IsNullOrWhiteSpace(dbConnectionString)}"
+            );
+
+            Console.WriteLine(
+                $"[CONFIG CHECK] Environment: {builder.Environment.EnvironmentName}"
+            );
+
             builder.Services.AddDbContext<FundooContext>(options =>
             {
                 options.UseNpgsql(builder.Configuration.GetConnectionString("FundooConnection"));
@@ -72,7 +101,7 @@ namespace FundooPractice
 
             builder.Services.AddHttpClient<IMessageClient, MessageClient>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7222/");
+                client.BaseAddress = new Uri("http://localhost:5091/");
             });
 
             // Jwt configuration
@@ -109,11 +138,10 @@ namespace FundooPractice
 
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+           
+             app.UseSwagger();
+             app.UseSwaggerUI();
+            
             // Configure the HTTP request pipeline.
 
             

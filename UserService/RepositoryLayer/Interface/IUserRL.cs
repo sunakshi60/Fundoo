@@ -13,8 +13,6 @@ namespace RepositoryLayer.Interface
         ResponseModel<RegistrationModel> RegisterUserRL(RegistrationModel registrationModel);
         UserEntity LoginUserRL(LoginModel login);
 
-        List<UserEntity> GetAllUsersRL();
-
         UserEntity GetUserByIdRL(int userId);
 
         UserEntity UpdateUserRL(int userId, RegistrationModel registrationModel);

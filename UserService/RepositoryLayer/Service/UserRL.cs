@@ -39,7 +39,6 @@ namespace RepositoryLayer.Service
 
             UserEntity user = new UserEntity();
 
-            user.UserId = registrationModel.userId;
             user.FirstName = registrationModel.firstName;
             user.LastName = registrationModel.lastName;
             user.Email = registrationModel.email;
@@ -47,7 +46,7 @@ namespace RepositoryLayer.Service
 
             PasswordHasher<UserEntity> passwordHasher = new PasswordHasher<UserEntity>();
 
-            user.Password = passwordHasher.HashPassword(
+            user.Password = _passwordHasher.HashPassword(
                 user,
                 registrationModel.password
             );
@@ -60,7 +59,6 @@ namespace RepositoryLayer.Service
 
             response.Data = new RegistrationModel
             {
-                userId = user.UserId,
                 firstName = user.FirstName,
                 lastName = user.LastName,
                 email = user.Email,
@@ -94,11 +92,6 @@ namespace RepositoryLayer.Service
         }
 
 
-        public List<UserEntity> GetAllUsersRL()
-        {
-            return fundooContext.Users.ToList();
-        }
-
         public UserEntity GetUserByIdRL(int userId)
         {
             return fundooContext.Users.FirstOrDefault(x => x.UserId == userId);
@@ -119,7 +112,7 @@ namespace RepositoryLayer.Service
             user.PhoneNumber = Convert.ToInt64(registrationModel.contactNo);
 
             PasswordHasher<UserEntity> passwordHasher = new PasswordHasher<UserEntity>();
-            user.Password = passwordHasher.HashPassword(
+            user.Password = _passwordHasher.HashPassword(
                 user,
                 registrationModel.password
             );

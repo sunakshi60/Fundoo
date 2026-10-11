@@ -62,11 +62,6 @@ namespace BussinessLayer.Service
             };
         }
 
-        public List<UserEntity> GetAllUsersBL()
-        {
-            return _userRL.GetAllUsersRL();
-        }
-
         public UserEntity GetUserByIdBL(int userId)
         {
             return _userRL.GetUserByIdRL(userId);

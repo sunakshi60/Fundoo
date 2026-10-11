@@ -42,14 +42,6 @@ namespace FundooPractice.Controllers
             return Ok(response);
         }
 
-        [Authorize]
-        [HttpGet]
-        public IActionResult GetAllUsers()
-        {
-            var result = _userBL.GetAllUsersBL();
-
-            return Ok(result);
-        }
 
         [HttpGet("{userId}")]
         public IActionResult GetUserById(int userId)

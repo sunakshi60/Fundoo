@@ -15,8 +15,6 @@ namespace BussinessLayer.Interface
 
         ResponseModel<LoginResponseModel> LoginUserBL(LoginModel model);
 
-        List<UserEntity> GetAllUsersBL();
-
         UserEntity GetUserByIdBL(int userId);
 
         UserEntity UpdateUserBL(int userId, RegistrationModel registrationModel);
