@@ -18,40 +18,16 @@ namespace FundooPractice
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var envConnectionString = Environment.GetEnvironmentVariable(
-                "ConnectionStrings__FundooConnection"
-             );
-
-            Console.WriteLine(
-                $"[ENV CHECK] Variable exists: {envConnectionString != null}"
-            );
-
-            Console.WriteLine(
-                $"[ENV CHECK] Variable is empty: {string.IsNullOrWhiteSpace(envConnectionString)}"
-            );
-
             // Add services to the container.
+
+            builder.Logging.ClearProviders();
 
             builder.Services.AddControllers();
             builder.Services.AddScoped<IUserBL, UserBL>();
             builder.Services.AddScoped<IUserRL, UserRL>();
+            builder.Services.AddScoped<INoteBL, NoteBL>();
+            builder.Services.AddScoped<INoteRL, NoteRL>();
             builder.Services.AddScoped<IJwtService, JwtService>();
-
-
-            var dbConnectionString =
-                builder.Configuration.GetConnectionString("FundooConnection");
-
-            Console.WriteLine(
-                $"[CONFIG CHECK] ConnectionString is null: {dbConnectionString == null}"
-            );
-
-            Console.WriteLine(
-                $"[CONFIG CHECK] ConnectionString is empty: {string.IsNullOrWhiteSpace(dbConnectionString)}"
-            );
-
-            Console.WriteLine(
-                $"[CONFIG CHECK] Environment: {builder.Environment.EnvironmentName}"
-            );
 
             builder.Services.AddDbContext<FundooContext>(options =>
             {
@@ -142,9 +118,7 @@ namespace FundooPractice
              app.UseSwagger();
              app.UseSwaggerUI();
             
-            // Configure the HTTP request pipeline.
-
-            
+            // Configure the HTTP request pipeline.   
 
             app.UseHttpsRedirection();
 

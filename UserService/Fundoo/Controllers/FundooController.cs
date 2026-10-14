@@ -1,7 +1,7 @@
 using BussinessLayer.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ModelLayer.Model;
+using ModelLayer.Model.UserRequest;
 
 namespace FundooPractice.Controllers
 {
@@ -84,13 +84,7 @@ namespace FundooPractice.Controllers
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
         {
             var result = await _userBL.ForgotPassword(model);
-
-            if (!result)
-            {
-                return BadRequest("Email not found");
-            }
-
-            return Ok("Password reset link sent to your email");
+            return Ok(result);
         }
 
 
@@ -105,27 +99,14 @@ namespace FundooPractice.Controllers
                 return Forbid();
             }
 
-            var authHeader = Request.Headers["Authorization"].ToString();
+            var result = _userBL.ResetPassword(model);
 
-            if (string.IsNullOrEmpty(authHeader))
+            if (!result.IsSuccess)
             {
-                return Unauthorized();
+                return BadRequest(result);
             }
 
-            var token = authHeader.Replace("Bearer ", "");
-
-            var result = _userBL.ResetPassword(
-                token,
-                model.NewPassword
-            );
-
-            if (!result)
-            {
-                return BadRequest("Invalid or expired reset token");
-            }
-
-            return Ok("Password reset successfully");
+            return Ok(result);
         }
-
     }
 }
