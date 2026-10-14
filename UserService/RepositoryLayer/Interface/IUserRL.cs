@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ModelLayer.Model;
+using ModelLayer.Model.UserRequest;
+using ModelLayer.Model.UserResponse;
 using RepositoryLayer.Entity;
 
 namespace RepositoryLayer.Interface
 {
     public interface IUserRL
     {
-        ResponseModel<RegistrationModel> RegisterUserRL(RegistrationModel registrationModel);
+        RegisterResponseModel<RegistrationModel> RegisterUserRL(RegistrationModel registrationModel);
         UserEntity LoginUserRL(LoginModel login);
 
         UserEntity GetUserByIdRL(int userId);
@@ -23,6 +24,6 @@ namespace RepositoryLayer.Interface
 
         bool SaveResetToken(string email, string token, DateTime expiry);
 
-        bool ResetPassword(string token, string newPassword);
+        bool ResetPassword(ResetPasswordModel model);
     }
 }

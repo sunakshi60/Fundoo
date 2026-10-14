@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ModelLayer.Model
+namespace ModelLayer.Model.UserRequest
 {
     public class LoginModel
     {

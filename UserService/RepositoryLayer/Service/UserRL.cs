@@ -1,13 +1,14 @@
-﻿using ModelLayer.Model;
-using RepositoryLayer.Context;
+﻿using RepositoryLayer.Context;
 using Microsoft.AspNetCore.Identity;
 using RepositoryLayer.Entity;
-using RepositoryLayer.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ModelLayer.Model.UserRequest;
+using ModelLayer.Model.UserResponse;
+using RepositoryLayer.Interface;
 
 namespace RepositoryLayer.Service
 {
@@ -22,9 +23,9 @@ namespace RepositoryLayer.Service
             _passwordHasher = new PasswordHasher<UserEntity>();
         }
 
-        public ResponseModel< RegistrationModel> RegisterUserRL(RegistrationModel registrationModel)
+        public RegisterResponseModel< RegistrationModel> RegisterUserRL(RegistrationModel registrationModel)
         {
-            ResponseModel<RegistrationModel> response = new ResponseModel<RegistrationModel>();
+            RegisterResponseModel<RegistrationModel> response = new RegisterResponseModel<RegistrationModel>();
 
             var existingUser = fundooContext.Users.FirstOrDefault(x => x.Email == registrationModel.email);
 
@@ -160,11 +161,11 @@ namespace RepositoryLayer.Service
             return true;
         }
 
-        public bool ResetPassword(string token, string newPassword)
+        public bool ResetPassword(ResetPasswordModel model)
         {
             var user = fundooContext.Users
                 .FirstOrDefault(x =>
-                    x.ResetToken == token &&
+                    x.ResetToken == model.Token &&
                     x.ResetTokenExpiry > DateTime.UtcNow);
 
             if (user == null)
@@ -172,11 +173,9 @@ namespace RepositoryLayer.Service
                 return false;
             }
 
-            var passwordHasher = new PasswordHasher<UserEntity>();
-
-            user.Password = passwordHasher.HashPassword(
+            user.Password = _passwordHasher.HashPassword(
                     user,
-                    newPassword);
+                    model.NewPassword);
 
             user.ResetToken = null;
             user.ResetTokenExpiry = null;

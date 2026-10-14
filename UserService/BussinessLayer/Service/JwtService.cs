@@ -25,7 +25,7 @@ namespace BussinessLayer.Service
             var jwtSettings = _configuration.GetSection("Jwt");
 
             var key = jwtSettings["Key"];
-            var issuer = jwtSettings["Isser"];
+            var issuer = jwtSettings["Issuer"];
             var audience = jwtSettings["Audience"];
 
             var securityKey = new SymmetricSecurityKey(

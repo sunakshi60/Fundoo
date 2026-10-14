@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelLayer.Model
+namespace ModelLayer.Model.UserRequest
 {
     public class RegistrationModel
     {

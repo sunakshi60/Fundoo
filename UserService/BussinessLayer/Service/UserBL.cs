@@ -1,6 +1,7 @@
 ﻿using BussinessLayer.Interface;
 using Microsoft.AspNetCore.Identity;
-using ModelLayer.Model;
+using ModelLayer.Model.UserRequest;
+using ModelLayer.Model.UserResponse;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using System;
@@ -25,18 +26,18 @@ namespace BussinessLayer.Service
             _messageClient = messageClient;
         }
 
-        public ResponseModel <RegistrationModel> RegisterUserBL(RegistrationModel registrationModel)
+        public RegisterResponseModel<RegistrationModel> RegisterUserBL(RegistrationModel registrationModel)
         {
             return _userRL.RegisterUserRL(registrationModel);
         }
 
-        public ResponseModel<LoginResponseModel> LoginUserBL(LoginModel model)
+        public RegisterResponseModel<LoginResponseModel> LoginUserBL(LoginModel model)
         {
             var user = _userRL.LoginUserRL(model);
 
             if (user == null)
             {
-                return new ResponseModel<LoginResponseModel>
+                return new RegisterResponseModel<LoginResponseModel>
                 {
                     IsSuccess = false,
                     Message = "Invalid email or password",
@@ -49,7 +50,7 @@ namespace BussinessLayer.Service
                 user.Email
             );
 
-            return new ResponseModel<LoginResponseModel>
+            return new RegisterResponseModel<LoginResponseModel>
             {
                 IsSuccess = true,
                 Message = "Login successful",
@@ -77,13 +78,17 @@ namespace BussinessLayer.Service
             return _userRL.DeleteUserRL(userId);
         }
 
-        public async Task<bool> ForgotPassword(ForgotPasswordModel model)
+        public async Task<ForgetPasswordResponseModel> ForgotPassword(ForgotPasswordModel model)
         {
             var user = _userRL.GetUserByEmail(model.Email);
 
             if (user == null)
             {
-                return false;
+                return new ForgetPasswordResponseModel
+                {
+                    IsSuccess = true,
+                    Message = "If an account exists for this email, a password reset email will be sent."
+                };
             }
 
             var token = _jwtService.GenerateResetToken(
@@ -101,22 +106,26 @@ namespace BussinessLayer.Service
 
             if (!saved)
             {
-                return false;
+                return new ForgetPasswordResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Unable to process the password reset request."
+                };
             }
 
             var subject = "Fundoo Password Reset";
 
             var body = $@"
-        <h2>Password Reset Request</h2>
-        <p>Hello {user.FirstName},Your password reset token is:</p>
+                <h2>Password Reset Request</h2>
+                <p>Hello {user.FirstName},Your password reset token is:</p>
 
-        <p>
-            <strong>{token}</strong>
-        </p>
+                <p>
+                <strong>{token}</strong>
+                </p>
 
-        <p>This token is valid for 15 minutes to authorize.</p>
-        <p>If you did not request a password reset, you can ignore this email.</p>      
-    ";
+                <p>This token is valid for 15 minutes to authorize.</p>
+                <p>If you did not request a password reset, you can ignore this email.</p>      
+            ";
 
             await _messageClient.SendEmailAsync(
                 user.Email,
@@ -124,14 +133,26 @@ namespace BussinessLayer.Service
                 body
             );
 
-            return true;
+            return new ForgetPasswordResponseModel
+            {
+                IsSuccess = true,
+                Message = "If an account exists for this email, a password reset email has been sent."
+            };           
         }
 
-        public bool ResetPassword(string token,string newPassword)
+        public ResetPasswordResponseModel ResetPassword(ResetPasswordModel model)
         {
-            return _userRL.ResetPassword(
-                token,
-                newPassword);
+            var isReset = _userRL.ResetPassword(model);
+
+            var response = new ResetPasswordResponseModel
+            {
+                IsSuccess = isReset,
+                Message = isReset
+                ? "Password reset successfully."
+                : "Invalid or expired reset token."
+            };
+
+            return response;
         }
     }
 }

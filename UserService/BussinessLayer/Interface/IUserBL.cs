@@ -1,19 +1,20 @@
-﻿using ModelLayer.Model;
-using RepositoryLayer.Entity;
+﻿using RepositoryLayer.Entity;
 using System.Security.Cryptography;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ModelLayer.Model.UserResponse;
+using ModelLayer.Model.UserRequest;
 
 namespace BussinessLayer.Interface
 {
     public interface IUserBL
     {
-        ResponseModel<RegistrationModel> RegisterUserBL(RegistrationModel registrationModel);
+        RegisterResponseModel<RegistrationModel> RegisterUserBL(RegistrationModel registrationModel);
 
-        ResponseModel<LoginResponseModel> LoginUserBL(LoginModel model);
+        RegisterResponseModel<LoginResponseModel> LoginUserBL(LoginModel model);
 
         UserEntity GetUserByIdBL(int userId);
 
@@ -21,8 +22,8 @@ namespace BussinessLayer.Interface
 
         bool DeleteUserBL(int userId);
 
-        Task<bool> ForgotPassword(ForgotPasswordModel model);
+        Task<ForgetPasswordResponseModel> ForgotPassword(ForgotPasswordModel model);
 
-        bool ResetPassword(string token,string newPassword);
+        ResetPasswordResponseModel ResetPassword(ResetPasswordModel model);
     }
 }
