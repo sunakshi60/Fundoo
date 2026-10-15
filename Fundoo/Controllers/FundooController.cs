@@ -1,9 +1,10 @@
 ﻿using BussinessLayer.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ModelLayer.Model;
 using Middleware.Services.Email;
+using ModelLayer.Model;
 using ModelLayer.Model.User.UserRequest;
+using NLog;
 
 namespace FundooPractice.Controllers
 {
@@ -72,6 +73,21 @@ namespace FundooPractice.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpGet("test-logging")]
+        public IActionResult TestLogging([FromServices] ILogger<FundooController> logger)
+        {
+            try
+            {
+                throw new InvalidOperationException("This is a deliberate test exception.");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Test exception occurred.");
+
+                return StatusCode(500,"Test exception logged successfully.");
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Middleware.Services.Email;
+using Fundoo.ExceptionHandling;
 using RepositoryLayer.Context;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Service;
@@ -21,8 +22,6 @@ namespace FundooPractice
 
             // Add services to the container.
 
-            builder.Logging.ClearProviders();
-
             builder.Services.AddControllers();
             builder.Services.AddScoped<IUserBL, UserBL>();
             builder.Services.AddScoped<IUserRL, UserRL>();
@@ -36,6 +35,9 @@ namespace FundooPractice
             {
                 options.UseNpgsql(builder.Configuration.GetConnectionString("FundooConnection"));
             });
+
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddProblemDetails();
 
             builder.Services.AddEndpointsApiExplorer();
 
@@ -115,6 +117,7 @@ namespace FundooPractice
 
             var app = builder.Build();
 
+            app.UseExceptionHandler();
 
             app.UseSwagger();
             app.UseSwaggerUI();
