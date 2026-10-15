@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="../BussinessLayer/BussinessLayer.csproj" />
+  <Project Path="../Middleware/Middleware.csproj" Id="f6f232f3-660b-4e29-a995-474ad23d7d20" />
+  <Project Path="../ModelLayer/ModelLayer.csproj" />
+  <Project Path="../RepositoryLayer/RepositoryLayer.csproj" />
+  <Project Path="Fundoo.csproj" />
+</Solution>
