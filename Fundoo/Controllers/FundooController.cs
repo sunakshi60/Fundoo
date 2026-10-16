@@ -13,36 +13,40 @@ namespace FundooPractice.Controllers
     public class FundooController : ControllerBase
     {
         private IUserBL _userBL;
+        private readonly ILogger<FundooController> _logger;
 
-        public FundooController(IUserBL _userBL)
+        public FundooController(IUserBL _userBL, ILogger<FundooController> logger)
         {
             this._userBL = _userBL;
+            _logger = logger;
         }
 
         [HttpPost("Register")]
         public IActionResult RegisterUser(RegistrationModel registrationModel)
         {
-            var result = _userBL.RegisterUserBL(registrationModel);
+            _logger.LogInformation("User registration request received.");
 
-            if (!result.IsSuccess)
+            try
             {
-                return BadRequest(result);
+                var result = _userBL.RegisterUserBL(registrationModel);
+
+                if (!result.IsSuccess)
+                {
+                    _logger.LogWarning("User registration failed. Reason: {Message}", result.Message);
+
+                    return BadRequest(result);
+                }
+
+                _logger.LogInformation("User registered successfully.");
+
+                return Ok(result);
             }
-
-            return Ok(result);
-        }
-
-        [HttpPost("Login")]
-        public IActionResult LoginUser(LoginModel loginModel)
-        {
-            var response = _userBL.LoginUserBL(loginModel);
-
-            if (!response.IsSuccess)
+            catch (Exception ex)
             {
-                return Unauthorized(response);
-            }
+                _logger.LogError(ex, "Unexpected error occurred during user registration.");
 
-            return Ok(response);
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
         
 

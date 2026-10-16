@@ -18,7 +18,7 @@ public class EmailService : IEmailService
         _configuration = configuration;
     }
 
-    public async Task SendEmailAsync(string to, string subject, string body)
+    public async Task SendEmailAsync(string email, string subject, string body)
     {
         var smtpHost = _configuration["EmailSettings:Host"]
             ?? throw new InvalidOperationException("SMTP host is missing.");
@@ -38,10 +38,10 @@ public class EmailService : IEmailService
             From = new MailAddress(username),
             Subject = subject,
             Body = body,
-            IsBodyHtml = false
+            IsBodyHtml = true
         };
 
-        message.To.Add(to);
+        message.To.Add(email);
 
         using var smtp = new SmtpClient(smtpHost, smtpPort)
         {

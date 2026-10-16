@@ -1,4 +1,5 @@
 ﻿using BussinessLayer.Interface;
+using FundooPractice.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer.Model.Notes.NotesRequest;
@@ -11,7 +12,6 @@ namespace Fundoo.Controllers
     public class NotesController : ControllerBase
     {
         private readonly INoteBL _noteBL;
-
         public NotesController(INoteBL noteBL)
         {
             _noteBL = noteBL;

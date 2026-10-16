@@ -1,9 +1,10 @@
-﻿using RepositoryLayer.Context;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using ModelLayer.Model.User.ResponseModel;
+using ModelLayer.Model.User.UserRequest;
+using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
-using ModelLayer.Model.User.UserRequest;
-using ModelLayer.Model.User.ResponseModel;
 
 namespace RepositoryLayer.Service
 {
@@ -11,6 +12,7 @@ namespace RepositoryLayer.Service
     {
         FundooContext fundooContext;
         private readonly PasswordHasher<UserEntity> _passwordHasher;
+
 
         public UserRL(FundooContext fundooContext)
         {
@@ -20,6 +22,7 @@ namespace RepositoryLayer.Service
 
         public RegisterResponseModel< RegistrationModel> RegisterUserRL(RegistrationModel registrationModel)
         {
+
             RegisterResponseModel<RegistrationModel> response = new RegisterResponseModel<RegistrationModel>();
 
             var existingUser = fundooContext.Users.FirstOrDefault(x => x.Email == registrationModel.email);

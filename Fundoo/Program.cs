@@ -11,6 +11,7 @@ using RepositoryLayer.Context;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Service;
 using System.Text;
+using NLog.Web;
 
 namespace FundooPractice
 {
@@ -21,6 +22,10 @@ namespace FundooPractice
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            //Configure NLog
+            builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
 
             builder.Services.AddControllers();
             builder.Services.AddScoped<IUserBL, UserBL>();
