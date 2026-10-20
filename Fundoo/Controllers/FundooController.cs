@@ -48,7 +48,19 @@ namespace FundooPractice.Controllers
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }
-        
+
+        [HttpPost("Login")]
+        public IActionResult LoginUser(LoginModel loginModel)
+        {
+            var response = _userBL.LoginUserBL(loginModel);
+
+                if (!response.IsSuccess)
+                {
+                    return Unauthorized(response);
+                }
+
+            return Ok(response);
+        }
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
@@ -77,21 +89,6 @@ namespace FundooPractice.Controllers
             }
 
             return Ok(result);
-        }
-
-        [HttpGet("test-logging")]
-        public IActionResult TestLogging([FromServices] ILogger<FundooController> logger)
-        {
-            try
-            {
-                throw new InvalidOperationException("This is a deliberate test exception.");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Test exception occurred.");
-
-                return StatusCode(500,"Test exception logged successfully.");
-            }
         }
     }
 }

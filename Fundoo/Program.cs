@@ -117,6 +117,12 @@ namespace FundooPractice
                 };
             });
 
+            //Redis register
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetConnectionString("Redis");
+                options.InstanceName = "Fundoo";
+            });
 
             builder.Services.AddAuthorization();
 
