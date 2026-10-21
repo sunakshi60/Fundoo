@@ -12,6 +12,7 @@ using RepositoryLayer.Interface;
 using RepositoryLayer.Service;
 using System.Text;
 using NLog.Web;
+using Middleware.Services.Cache;
 
 namespace FundooPractice
 {
@@ -33,6 +34,7 @@ namespace FundooPractice
             builder.Services.AddScoped<INoteBL, NoteBL>();
             builder.Services.AddScoped<INoteRL, NoteRL>();
             builder.Services.AddScoped<IJwtService, JwtService>();
+            builder.Services.AddScoped<ICacheService, CacheService>();
 
             builder.Services.AddTransient<IEmailService, EmailService>();
 

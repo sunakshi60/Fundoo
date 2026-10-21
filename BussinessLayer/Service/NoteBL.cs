@@ -8,17 +8,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
-using System.Text.Json;
+using Middleware.Services.Cache;
 
 namespace BussinessLayer.Service
 {
     public class NoteBL : INoteBL
     {
         private readonly INoteRL _noteRL;
-        private readonly IDistributedCache _cache;
+        private readonly ICacheService _cache;
 
-        public NoteBL(INoteRL noteRL,IDistributedCache cache)
+        public NoteBL(INoteRL noteRL, ICacheService cache)
         {
             _noteRL = noteRL;
             _cache = cache;
@@ -56,34 +55,23 @@ namespace BussinessLayer.Service
             string cacheKey = $"user:{userId}:notes";
 
             //Check Redis
-            var cachedData = await _cache.GetStringAsync(cacheKey);
+            var cachedNotes = await _cache.GetAsync<List<NoteEntity>>(cacheKey);
 
-            if (cachedData != null)
+            if (cachedNotes != null)
             {
-                var cachedNotes = JsonSerializer.Deserialize <List<NoteEntity >> (cachedData);
-
-                if (cachedNotes != null)
+                return new NotesResponseModel<List<NoteEntity>>
                 {
-                    return new NotesResponseModel<List<NoteEntity>>
-                    {
-                        IsSuccess = true,
-                        Message="Notes retrieved successfully from cache",
-                        Data=cachedNotes
-                    };
-                }
+                    IsSuccess = true,
+                    Message = "Notes retrieved successfully from cache",
+                    Data = cachedNotes
+                };
             }
 
-            //Cache miss - fetch from PostgresSQL
+            //Cache miss : fetch from PostgresSQL
             var notes = await _noteRL.ViewNotesRL(userId);
 
             //store the result in Redis for 10 minutes
-            var jsonData = JsonSerializer.Serialize(notes);
-
-            await _cache.SetStringAsync(cacheKey, jsonData,
-              new DistributedCacheEntryOptions
-              {
-                  AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-              });
+            await _cache.SetAsync(cacheKey, notes, TimeSpan.FromMinutes(10));
 
             //return notes
             return new NotesResponseModel<List<NoteEntity>>
@@ -100,21 +88,16 @@ namespace BussinessLayer.Service
             string cacheKey = $"user:{userId}:note:{noteId}";
 
             // Check Redis cache
-            var cachedData = await _cache.GetStringAsync(cacheKey);
+            var cachedNote = await _cache.GetAsync<NoteEntity>(cacheKey);
 
-            if (cachedData != null)
+            if (cachedNote != null)
             {
-                var cachedNote = JsonSerializer.Deserialize<NoteEntity>(cachedData);
-
-                if (cachedNote != null)
+                return new NotesResponseModel<NoteEntity>
                 {
-                    return new NotesResponseModel<NoteEntity>
-                    {
-                        IsSuccess = true,
-                        Message = "Note retrieved successfully from cache",
-                        Data = cachedNote
-                    };
-                }
+                    IsSuccess = true,
+                    Message = "Note retrieved successfully from cache",
+                    Data = cachedNote
+                };
             }
 
             // Cache miss: fetch note from the database
@@ -131,17 +114,8 @@ namespace BussinessLayer.Service
             }
 
             // Store the note in Redis for 10 minutes
-            var jsonData = JsonSerializer.Serialize(note);
+            await _cache.SetAsync(cacheKey, note, TimeSpan.FromMinutes(10));
 
-            await _cache.SetStringAsync(
-                cacheKey,
-                jsonData,
-                new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-                });
-
-            // Return the note
             return new NotesResponseModel<NoteEntity>
             {
                 IsSuccess = true,
