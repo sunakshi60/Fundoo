@@ -1,9 +1,10 @@
 ﻿using BussinessLayer.Interface;
+using Middleware.Security;
+using Middleware.Services.Email;
+using ModelLayer.Model.User.ResponseModel;
+using ModelLayer.Model.User.UserRequest;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
-using Middleware.Services.Email;
-using ModelLayer.Model.User.UserRequest;
-using ModelLayer.Model.User.ResponseModel;
 
 
 namespace BussinessLayer.Service
@@ -13,12 +14,15 @@ namespace BussinessLayer.Service
         private readonly IUserRL _userRL;
         private readonly IJwtService _jwtService;
         private readonly IEmailService _emailService;
+        private readonly CustomPasswordHasher _passwordHasher;
 
-        public UserBL(IUserRL _userRL, IJwtService jwtService, IEmailService emailService)
+
+        public UserBL(IUserRL _userRL, IJwtService jwtService, IEmailService emailService, CustomPasswordHasher passwordHasher)
         {
             this._userRL = _userRL;
             _jwtService = jwtService;
             _emailService = emailService;
+            _passwordHasher = passwordHasher;
         }
 
         public RegisterResponseModel<RegistrationModel> RegisterUserBL(RegistrationModel registrationModel)

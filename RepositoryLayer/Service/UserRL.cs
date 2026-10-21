@@ -5,19 +5,19 @@ using ModelLayer.Model.User.UserRequest;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
+using Middleware.Security;
 
 namespace RepositoryLayer.Service
 {
     public class UserRL : IUserRL
     {
-        FundooContext fundooContext;
-        private readonly PasswordHasher<UserEntity> _passwordHasher;
+        private readonly FundooContext fundooContext;
+        private readonly CustomPasswordHasher _passwordHasher;
 
-
-        public UserRL(FundooContext fundooContext)
+        public UserRL(FundooContext fundooContext, CustomPasswordHasher passwordHasher)
         {
             this.fundooContext = fundooContext;
-            _passwordHasher = new PasswordHasher<UserEntity>();
+            _passwordHasher = passwordHasher;
         }
 
         public RegisterResponseModel< RegistrationModel> RegisterUserRL(RegistrationModel registrationModel)
@@ -43,12 +43,8 @@ namespace RepositoryLayer.Service
             user.Email = registrationModel.email;
             user.PhoneNumber = Convert.ToInt64(registrationModel.contactNo);
 
-            PasswordHasher<UserEntity> passwordHasher = new PasswordHasher<UserEntity>();
+            user.Password = _passwordHasher.HashPassword(registrationModel.password);
 
-            user.Password = _passwordHasher.HashPassword(
-                user,
-                registrationModel.password
-            );
 
             fundooContext.Users.Add(user);
             fundooContext.SaveChanges();
@@ -76,13 +72,9 @@ namespace RepositoryLayer.Service
                 return null;
             }
 
-            var result = _passwordHasher.VerifyHashedPassword(
-                user,
-                user.Password,
-                model.password
-            );
+            bool isValid = _passwordHasher.VerifyPassword(model.password, user.Password);
 
-            if (result == PasswordVerificationResult.Failed)
+            if (!isValid)
             {
                 return null;
             }
@@ -103,9 +95,7 @@ namespace RepositoryLayer.Service
             if (user == null)
                 return false;
 
-            user.Password = _passwordHasher.HashPassword(
-                user,
-                newPassword);
+            user.Password = _passwordHasher.HashPassword(newPassword);
 
             fundooContext.SaveChanges();
 

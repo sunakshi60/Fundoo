@@ -1,18 +1,19 @@
 using BussinessLayer.Interface;
 using BussinessLayer.Service;
+using Fundoo.ExceptionHandling;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
+using Middleware.Security;
+using Middleware.Services.Cache;
 using Middleware.Services.Email;
-using Fundoo.ExceptionHandling;
+using NLog.Web;
 using RepositoryLayer.Context;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Service;
 using System.Text;
-using NLog.Web;
-using Middleware.Services.Cache;
 
 namespace FundooPractice
 {
@@ -35,6 +36,7 @@ namespace FundooPractice
             builder.Services.AddScoped<INoteRL, NoteRL>();
             builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddScoped<ICacheService, CacheService>();
+            builder.Services.AddScoped<CustomPasswordHasher>();
 
             builder.Services.AddTransient<IEmailService, EmailService>();
 
