@@ -1,4 +1,6 @@
 using BussinessLayer.Interface;
+using BussinessLayer.Notes.Command;
+using BussinessLayer.Notes.Query;
 using BussinessLayer.Service;
 using BussinessLayer.User.Command;
 using BussinessLayer.User.Query;
@@ -6,7 +8,6 @@ using Fundoo.ExceptionHandling;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Middleware.Security;
 using Middleware.Services.Cache;
@@ -45,6 +46,12 @@ namespace FundooPractice
             builder.Services.AddScoped<LoginUserQueryHandler>();
             builder.Services.AddScoped<ForgotPasswordCommandHandler>();
             builder.Services.AddScoped<ResetPasswordCommandHandler>();
+            builder.Services.AddScoped<AddNoteCommandHandler>();
+            builder.Services.AddScoped<ViewNotesQueryHandler>();
+            builder.Services.AddScoped<ViewNoteByIdQueryHandler>();
+            builder.Services.AddScoped<EditNoteCommandHandler>();
+            builder.Services.AddScoped<DeleteNoteCommandHandler>();
+            builder.Services.AddScoped<ArchiveNoteCommandHandler>();
 
             builder.Services.AddTransient<IEmailService, EmailService>();
 

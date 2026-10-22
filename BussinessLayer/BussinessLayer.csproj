@@ -16,8 +16,4 @@
     <ProjectReference Include="..\RepositoryLayer\RepositoryLayer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Notes\" />
-  </ItemGroup>
-
 </Project>

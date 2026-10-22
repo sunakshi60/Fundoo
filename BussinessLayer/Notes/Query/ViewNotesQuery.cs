@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BussinessLayer.Notes.Query
+{
+    public class ViewNotesQuery
+    {
+        public int UserId { get; }
+
+        public ViewNotesQuery(int userId)
+        {
+            UserId = userId;
+        }
+    }
+}
