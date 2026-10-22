@@ -1,11 +1,11 @@
 ﻿using BussinessLayer.Interface;
+using BussinessLayer.User.Command;
+using BussinessLayer.User.Query;
 using Middleware.Security;
 using Middleware.Services.Email;
 using ModelLayer.Model.User.ResponseModel;
 using ModelLayer.Model.User.UserRequest;
-using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
-
 
 namespace BussinessLayer.Service
 {
@@ -15,135 +15,53 @@ namespace BussinessLayer.Service
         private readonly IJwtService _jwtService;
         private readonly IEmailService _emailService;
         private readonly CustomPasswordHasher _passwordHasher;
+        private readonly RegisterUserCommandHandler _registerUserHandler;
+        private readonly LoginUserQueryHandler _loginUserHandler;
+        private readonly ForgotPasswordCommandHandler _forgotPasswordHandler;
+        private readonly ResetPasswordCommandHandler _resetPasswordHandler;
 
 
-        public UserBL(IUserRL _userRL, IJwtService jwtService, IEmailService emailService, CustomPasswordHasher passwordHasher)
+        public UserBL(IUserRL _userRL, IJwtService jwtService, IEmailService emailService,
+                      CustomPasswordHasher passwordHasher, RegisterUserCommandHandler registerUserHandler,
+                      LoginUserQueryHandler loginUserHandler, ForgotPasswordCommandHandler forgotPasswordHandler,
+                      ResetPasswordCommandHandler resetPasswordHandler)
         {
             this._userRL = _userRL;
             _jwtService = jwtService;
             _emailService = emailService;
             _passwordHasher = passwordHasher;
+            _registerUserHandler = registerUserHandler;
+            _loginUserHandler = loginUserHandler;
+            _forgotPasswordHandler = forgotPasswordHandler;
+            _resetPasswordHandler = resetPasswordHandler;
         }
 
         public RegisterResponseModel<RegistrationModel> RegisterUserBL(RegistrationModel registrationModel)
         {
-            return _userRL.RegisterUserRL(registrationModel);
+            var command = new RegisterUserCommand(registrationModel);
+
+            return _registerUserHandler.Handle(command);
         }
 
         public RegisterResponseModel<LoginResponseModel> LoginUserBL(LoginModel model)
         {
-            var user = _userRL.LoginUserRL(model);
+            var query = new LoginUserQuery(model);
 
-            if (user == null)
-            {
-                return new RegisterResponseModel<LoginResponseModel>
-                {
-                    IsSuccess = false,
-                    Message = "Invalid email or password",
-                    Data = null
-                };
-            }
-
-            var token = _jwtService.GenerateToken(
-                user.UserId,
-                user.Email
-            );
-
-            return new RegisterResponseModel<LoginResponseModel>
-            {
-                IsSuccess = true,
-                Message = "Login successful",
-                Data = new LoginResponseModel
-                {
-                    Token = token,
-                    UserId = user.UserId,
-                    Email = user.Email
-                }
-            };
+            return _loginUserHandler.Handle(query);
         }
 
         public async Task<ForgetPasswordResponseModel> ForgotPassword(ForgotPasswordModel model)
         {
-            var user = _userRL.GetUserByEmail(model.Email);
+            var command = new ForgotPasswordCommand(model);
 
-            if (user == null)
-            {
-                return new ForgetPasswordResponseModel
-                {
-                    IsSuccess = true,
-                    Message = "If an account exists for this email, a password reset email will be sent."
-                };
-            }
-
-            var token = _jwtService.GenerateResetToken(
-                user.UserId,
-                user.Email
-            );
-
-            var subject = "Fundoo Password Reset";
-
-            var body = $@"
-                <h2>Password Reset Request</h2>
-                <p>Hello {user.FirstName},Your password reset token is:</p>
-
-                <p>
-                <strong>{token}</strong>
-                </p>
-
-                <p>This token is valid for 15 minutes to authorize.</p>
-                <p>If you did not request a password reset, you can ignore this email.</p>      
-            ";
-
-            await _emailService.SendEmailAsync(
-                user.Email,
-                subject,
-                body
-            );
-
-            return new ForgetPasswordResponseModel
-            {
-                IsSuccess = true,
-                Message = "If an account exists for this email, a password reset email has been sent."
-            };           
+            return await _forgotPasswordHandler.Handle(command);
         }
 
         public ResetPasswordResponseModel ResetPassword(ResetPasswordModel model)
         {
-            var principal = _jwtService.ValidateResetToken(model.Token);
+            var command = new ResetPasswordCommand(model);
 
-            if (principal == null)
-            {
-                return new ResetPasswordResponseModel
-                {
-                    IsSuccess = false,
-                    Message = "Invalid or expired reset token."
-                };
-            }
-
-            var userIdClaim = principal.FindFirst("UserId")?.Value;
-            var emailClaim = principal.FindFirst("Email")?.Value;
-
-            if (!int.TryParse(userIdClaim, out var userId) ||
-                string.IsNullOrWhiteSpace(emailClaim))
-            {
-                return new ResetPasswordResponseModel
-                {
-                    IsSuccess = false,
-                    Message = "Invalid reset token claims."
-                };
-            }
-
-            var isReset = _userRL.UpdatePassword(
-                userId,
-                model.NewPassword);
-
-            return new ResetPasswordResponseModel
-            {
-                IsSuccess = isReset,
-                Message = isReset
-                    ? "Password reset successfully."
-                    : "Unable to reset password."
-            };
+            return _resetPasswordHandler.Handle(command);
         }
     }
 }

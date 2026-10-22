@@ -1,5 +1,7 @@
 using BussinessLayer.Interface;
 using BussinessLayer.Service;
+using BussinessLayer.User.Command;
+using BussinessLayer.User.Query;
 using Fundoo.ExceptionHandling;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +39,12 @@ namespace FundooPractice
             builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddScoped<ICacheService, CacheService>();
             builder.Services.AddScoped<CustomPasswordHasher>();
+
+            // Register Handler
+            builder.Services.AddScoped<RegisterUserCommandHandler>();
+            builder.Services.AddScoped<LoginUserQueryHandler>();
+            builder.Services.AddScoped<ForgotPasswordCommandHandler>();
+            builder.Services.AddScoped<ResetPasswordCommandHandler>();
 
             builder.Services.AddTransient<IEmailService, EmailService>();
 
