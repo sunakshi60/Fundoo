@@ -15,16 +15,16 @@ namespace BussinessLayer.Service
         private readonly IJwtService _jwtService;
         private readonly IEmailService _emailService;
         private readonly CustomPasswordHasher _passwordHasher;
-        private readonly RegisterUserCommandHandler _registerUserHandler;
-        private readonly LoginUserQueryHandler _loginUserHandler;
-        private readonly ForgotPasswordCommandHandler _forgotPasswordHandler;
-        private readonly ResetPasswordCommandHandler _resetPasswordHandler;
+        private readonly IRegisterUserCommandHandler _registerUserHandler;
+        private readonly ILoginUserQueryHandler _loginUserHandler;
+        private readonly IForgotPasswordCommandHandler _forgotPasswordHandler;
+        private readonly IResetPasswordCommandHandler _resetPasswordHandler;
 
 
         public UserBL(IUserRL _userRL, IJwtService jwtService, IEmailService emailService,
-                      CustomPasswordHasher passwordHasher, RegisterUserCommandHandler registerUserHandler,
-                      LoginUserQueryHandler loginUserHandler, ForgotPasswordCommandHandler forgotPasswordHandler,
-                      ResetPasswordCommandHandler resetPasswordHandler)
+                      CustomPasswordHasher passwordHasher, IRegisterUserCommandHandler registerUserHandler,
+                      ILoginUserQueryHandler loginUserHandler, IForgotPasswordCommandHandler forgotPasswordHandler,
+                      IResetPasswordCommandHandler resetPasswordHandler)
         {
             this._userRL = _userRL;
             _jwtService = jwtService;

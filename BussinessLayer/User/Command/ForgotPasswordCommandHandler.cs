@@ -5,7 +5,7 @@ using RepositoryLayer.Interface;
 
 namespace BussinessLayer.User.Command
 {
-    public class ForgotPasswordCommandHandler
+    public class ForgotPasswordCommandHandler : IForgotPasswordCommandHandler
     {
         private readonly IUserRL _userRL;
         private readonly IJwtService _jwtService;

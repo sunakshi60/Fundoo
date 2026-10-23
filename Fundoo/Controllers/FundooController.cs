@@ -1,10 +1,7 @@
 ﻿using BussinessLayer.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Middleware.Services.Email;
-using ModelLayer.Model;
 using ModelLayer.Model.User.UserRequest;
-using NLog;
 
 namespace FundooPractice.Controllers
 {

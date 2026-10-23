@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BussinessLayer.User.Command
 {
-    public class RegisterUserCommand
+    public class RegisterUserCommand 
     {
         public RegistrationModel RegistrationModel { get; set; }
 

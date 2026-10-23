@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BussinessLayer.Notes.Query
 {
-    public class ViewNotesQueryHandler
+    public class ViewNotesQueryHandler : IViewNotesQueryHandler
     {
         private readonly INoteRL _noteRL;
         private readonly ICacheService _cache;

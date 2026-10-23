@@ -4,7 +4,7 @@ using RepositoryLayer.Interface;
 
 namespace BussinessLayer.Notes.Command
 {
-    public class ArchiveNoteCommandHandler
+    public class ArchiveNoteCommandHandler : IArchiveNoteCommandHandler
     {
         private readonly INoteRL _noteRL;
         private readonly ICacheService _cache;

@@ -4,7 +4,7 @@ using RepositoryLayer.Interface;
 
 namespace BussinessLayer.User.Query
 {
-    public class LoginUserQueryHandler
+    public class LoginUserQueryHandler : ILoginUserQueryHandler
     {
         private readonly IUserRL _userRL;
         private readonly IJwtService _jwtService;

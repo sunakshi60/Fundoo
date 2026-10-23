@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BussinessLayer.User.Command
 {
-    public class ResetPasswordCommandHandler
+    public class ResetPasswordCommandHandler : IResetPasswordCommandHandler
     {
         private readonly IJwtService _jwtService;
         private readonly IUserRL _userRL;

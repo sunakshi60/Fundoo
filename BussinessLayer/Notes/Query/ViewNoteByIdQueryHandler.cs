@@ -2,15 +2,10 @@
 using ModelLayer.Model.Notes.NotesResponse;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BussinessLayer.Notes.Query
 {
-    public class ViewNoteByIdQueryHandler
+    public class ViewNoteByIdQueryHandler : IViewNoteByIdQueryHandler
     {
         private readonly INoteRL _noteRL;
         private readonly ICacheService _cache;

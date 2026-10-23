@@ -9,17 +9,17 @@ namespace BussinessLayer.Service
 {
     public class NoteBL : INoteBL
     {
-        private readonly AddNoteCommandHandler _addNoteHandler;
-        private readonly ViewNotesQueryHandler _viewNotesHandler;
-        private readonly ViewNoteByIdQueryHandler _viewNoteByIdHandler;
-        private readonly EditNoteCommandHandler _editNoteHandler;
-        private readonly DeleteNoteCommandHandler _deleteNoteHandler;
-        private readonly ArchiveNoteCommandHandler _archiveNoteHandler;
+        private readonly IAddNoteCommandHandler _addNoteHandler;
+        private readonly IViewNotesQueryHandler _viewNotesHandler;
+        private readonly IViewNoteByIdQueryHandler _viewNoteByIdHandler;
+        private readonly IEditNoteCommandHandler _editNoteHandler;
+        private readonly IDeleteNoteCommandHandler _deleteNoteHandler;
+        private readonly IArchiveNoteCommandHandler _archiveNoteHandler;
 
-        public NoteBL(AddNoteCommandHandler addNoteHandler,
-            ViewNotesQueryHandler viewNotesHandler, ViewNoteByIdQueryHandler viewNoteByIdHandler,
-            EditNoteCommandHandler editNoteHandler, DeleteNoteCommandHandler deleteNoteHandler,
-            ArchiveNoteCommandHandler archiveNoteHandler)
+        public NoteBL(IAddNoteCommandHandler addNoteHandler,
+            IViewNotesQueryHandler viewNotesHandler, IViewNoteByIdQueryHandler viewNoteByIdHandler,
+            IEditNoteCommandHandler editNoteHandler, IDeleteNoteCommandHandler deleteNoteHandler,
+            IArchiveNoteCommandHandler archiveNoteHandler)
         {
             _addNoteHandler = addNoteHandler;
             _viewNotesHandler = viewNotesHandler;

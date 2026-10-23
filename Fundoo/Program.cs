@@ -42,16 +42,16 @@ namespace FundooPractice
             builder.Services.AddScoped<CustomPasswordHasher>();
 
             // Register Handler
-            builder.Services.AddScoped<RegisterUserCommandHandler>();
-            builder.Services.AddScoped<LoginUserQueryHandler>();
-            builder.Services.AddScoped<ForgotPasswordCommandHandler>();
-            builder.Services.AddScoped<ResetPasswordCommandHandler>();
-            builder.Services.AddScoped<AddNoteCommandHandler>();
-            builder.Services.AddScoped<ViewNotesQueryHandler>();
-            builder.Services.AddScoped<ViewNoteByIdQueryHandler>();
-            builder.Services.AddScoped<EditNoteCommandHandler>();
-            builder.Services.AddScoped<DeleteNoteCommandHandler>();
-            builder.Services.AddScoped<ArchiveNoteCommandHandler>();
+            builder.Services.AddScoped<IRegisterUserCommandHandler, RegisterUserCommandHandler>();
+            builder.Services.AddScoped<ILoginUserQueryHandler, LoginUserQueryHandler>();
+            builder.Services.AddScoped<IForgotPasswordCommandHandler, ForgotPasswordCommandHandler > ();
+            builder.Services.AddScoped<IResetPasswordCommandHandler, ResetPasswordCommandHandler>();
+            builder.Services.AddScoped<IAddNoteCommandHandler, AddNoteCommandHandler>();
+            builder.Services.AddScoped<IViewNotesQueryHandler, ViewNotesQueryHandler>();
+            builder.Services.AddScoped<IViewNoteByIdQueryHandler , ViewNoteByIdQueryHandler>();
+            builder.Services.AddScoped<IEditNoteCommandHandler, EditNoteCommandHandler>();
+            builder.Services.AddScoped<IDeleteNoteCommandHandler, DeleteNoteCommandHandler>();
+            builder.Services.AddScoped<IArchiveNoteCommandHandler, ArchiveNoteCommandHandler>();
 
             builder.Services.AddTransient<IEmailService, EmailService>();
 

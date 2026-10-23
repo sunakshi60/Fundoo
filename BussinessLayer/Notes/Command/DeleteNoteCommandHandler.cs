@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BussinessLayer.Notes.Command
 {
-    public class DeleteNoteCommandHandler
+    public class DeleteNoteCommandHandler : IDeleteNoteCommandHandler
     {
         private readonly INoteRL _noteRL;
         private readonly ICacheService _cache;

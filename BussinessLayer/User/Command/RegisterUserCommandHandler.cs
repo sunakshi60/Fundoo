@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BussinessLayer.User.Command
 {
-    public class RegisterUserCommandHandler
+    public class RegisterUserCommandHandler : IRegisterUserCommandHandler
     {
         private readonly IUserRL _userRL;
 
