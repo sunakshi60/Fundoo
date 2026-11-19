@@ -101,5 +101,14 @@ namespace RepositoryLayer.Service
 
             return true;
         }
+
+        public UserEntity? GetUserByGoogleId(string googleId)=> fundooContext.Users.FirstOrDefault(x => x.GoogleId == googleId);
+
+        public void LinkGoogleId(int userId, string googleId)
+        {
+            var user = fundooContext.Users.First(x => x.UserId == userId);
+            user.GoogleId = googleId;
+            fundooContext.SaveChanges();
+        }
     }
 }

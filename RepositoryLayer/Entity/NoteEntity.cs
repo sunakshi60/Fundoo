@@ -31,5 +31,6 @@ namespace RepositoryLayer.Entity
 
         [ForeignKey("UserId")]
         public UserEntity User { get; set; } = null!;
+        public ICollection<NoteLabelEntity> NoteLabels { get; set; }  = new List<NoteLabelEntity>();
     }
 }

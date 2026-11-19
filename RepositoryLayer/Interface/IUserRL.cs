@@ -18,6 +18,8 @@ namespace RepositoryLayer.Interface
         UserEntity GetUserByEmail(string email);
 
         bool UpdatePassword(int userId, string newPassword);
+        UserEntity? GetUserByGoogleId(string googleId);
+        void LinkGoogleId(int userId, string googleId);
 
     }
 }

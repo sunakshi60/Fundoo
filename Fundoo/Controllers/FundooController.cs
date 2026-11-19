@@ -11,11 +11,11 @@ namespace FundooPractice.Controllers
     {
         private IUserBL _userBL;
         private readonly ILogger<FundooController> _logger;
-
+   
         public FundooController(IUserBL _userBL, ILogger<FundooController> logger)
         {
             this._userBL = _userBL;
-            _logger = logger;
+            _logger = logger;      
         }
 
         [HttpPost("Register")]

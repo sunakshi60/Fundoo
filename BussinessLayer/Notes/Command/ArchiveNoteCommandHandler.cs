@@ -1,4 +1,5 @@
-﻿using Middleware.Services.Cache;
+﻿using Microsoft.Extensions.Logging;
+using Middleware.Services.Cache;
 using ModelLayer.Model.Notes.NotesResponse;
 using RepositoryLayer.Interface;
 
@@ -8,21 +9,30 @@ namespace BussinessLayer.Notes.Command
     {
         private readonly INoteRL _noteRL;
         private readonly ICacheService _cache;
+        private readonly ILogger<ArchiveNoteCommandHandler> _logger;
 
-        public ArchiveNoteCommandHandler(INoteRL noteRL, ICacheService cache)
+        public ArchiveNoteCommandHandler(INoteRL noteRL, ICacheService cache, ILogger<ArchiveNoteCommandHandler> logger)
         {
             _noteRL = noteRL;
             _cache = cache;
+            _logger = logger;
         }
 
         public async Task<NotesResponseModel<bool>> Handle(ArchiveNoteCommand command)
         {
-            var updated = await _noteRL.ArchUnarchivedRL(
+            _logger.LogInformation("Archive note process started. NoteId: {NoteId}, UserId: {UserId}",
                 command.NoteId,
                 command.UserId);
 
+            var updated = await _noteRL.ArchUnarchivedRL(command.NoteId, command.UserId);
+
             if (!updated)
             {
+                _logger.LogWarning(
+                    "Note could not be archived. NoteId: {NoteId}, UserId: {UserId}",
+                    command.NoteId,
+                    command.UserId);
+
                 return new NotesResponseModel<bool>
                 {
                     IsSuccess = false,
@@ -35,6 +45,15 @@ namespace BussinessLayer.Notes.Command
             await _cache.RemoveAsync($"user:{command.UserId}:notes");
 
             await _cache.RemoveAsync($"user:{command.UserId}:note:{command.NoteId}");
+
+            _logger.LogInformation(
+                "Note archive status updated successfully. NoteId: {NoteId}, UserId: {UserId}",
+                command.NoteId,
+                command.UserId);
+
+            _logger.LogDebug(
+                "Notes list and individual-note caches invalidated for UserId: {UserId}",
+                command.UserId);
 
             return new NotesResponseModel<bool>
             {

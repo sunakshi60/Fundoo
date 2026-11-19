@@ -1,9 +1,13 @@
 using BussinessLayer.Interface;
+using BussinessLayer.Label.Command;
+using BussinessLayer.Label.Query;
+using BussinessLayer.Label.Validator;
 using BussinessLayer.Notes.Command;
 using BussinessLayer.Notes.Query;
 using BussinessLayer.Service;
 using BussinessLayer.User.Command;
 using BussinessLayer.User.Query;
+using FluentValidation;
 using Fundoo.ExceptionHandling;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +16,7 @@ using Microsoft.OpenApi.Models;
 using Middleware.Security;
 using Middleware.Services.Cache;
 using Middleware.Services.Email;
+using Middleware.Services.GoogleAuth;
 using NLog.Web;
 using RepositoryLayer.Context;
 using RepositoryLayer.Interface;
@@ -37,6 +42,8 @@ namespace FundooPractice
             builder.Services.AddScoped<IUserRL, UserRL>();
             builder.Services.AddScoped<INoteBL, NoteBL>();
             builder.Services.AddScoped<INoteRL, NoteRL>();
+            builder.Services.AddScoped<ILabelRL, LabelRL>();
+            builder.Services.AddScoped<ILabelBL, LabelBL>();
             builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddScoped<ICacheService, CacheService>();
             builder.Services.AddScoped<CustomPasswordHasher>();
@@ -52,6 +59,16 @@ namespace FundooPractice
             builder.Services.AddScoped<IEditNoteCommandHandler, EditNoteCommandHandler>();
             builder.Services.AddScoped<IDeleteNoteCommandHandler, DeleteNoteCommandHandler>();
             builder.Services.AddScoped<IArchiveNoteCommandHandler, ArchiveNoteCommandHandler>();
+            builder.Services.AddScoped<IGoogleLoginQueryHandler, GoogleLoginQueryHandler>();
+            builder.Services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
+            builder.Services.AddScoped<ICreateLabelCommandHandler, CreateLabelCommandHandler>();
+            builder.Services.AddScoped<IValidator<CreateLabelCommand>, CreateLabelCommandValidator>();
+            builder.Services.AddScoped<IGetLabelQueryHandler, GetLabelQueryHandler>();
+            builder.Services.AddScoped<IRenameLabelCommandHandler, RenameLabelCommandHandler>();
+            builder.Services.AddScoped<IValidator<RenameLabelCommand>,RenameLabelCommandValidator>();
+            builder.Services.AddScoped<IDeleteLabelCommandHandler, DeleteLabelCommandHandler>();
+            builder.Services.AddScoped<IAttachLabelToNoteCommandHandler, AttachLabelToNoteCommandHandler>();
+            builder.Services.AddScoped<IRemoveLabelFromNoteCommandHandler, RemoveLabelFromNoteCommandHandler>();
 
             builder.Services.AddTransient<IEmailService, EmailService>();
 
@@ -135,6 +152,8 @@ namespace FundooPractice
                     )
                 };
             });
+           
+
 
             //Redis register
             builder.Services.AddStackExchangeRedisCache(options =>

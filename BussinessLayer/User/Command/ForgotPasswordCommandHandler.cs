@@ -1,4 +1,5 @@
 ﻿using BussinessLayer.Interface;
+using Microsoft.Extensions.Logging;
 using Middleware.Services.Email;
 using ModelLayer.Model.User.ResponseModel;
 using RepositoryLayer.Interface;
@@ -10,22 +11,28 @@ namespace BussinessLayer.User.Command
         private readonly IUserRL _userRL;
         private readonly IJwtService _jwtService;
         private readonly IEmailService _emailService;
+        private readonly ILogger<ForgotPasswordCommandHandler> _logger;
 
-        public ForgotPasswordCommandHandler(IUserRL userRL,IJwtService jwtService,IEmailService emailService)
+        public ForgotPasswordCommandHandler(IUserRL userRL,IJwtService jwtService,IEmailService emailService, ILogger<ForgotPasswordCommandHandler> logger)
         {
             _userRL = userRL;
             _jwtService = jwtService;
             _emailService = emailService;
+            _logger = logger;
         }
 
         public async Task<ForgetPasswordResponseModel> Handle(ForgotPasswordCommand command)
         {
+            _logger.LogInformation("Forgot password process started.");
+
             var model = command.Model;
 
             var user = _userRL.GetUserByEmail(model.Email);
 
             if (user == null)
             {
+                _logger.LogInformation("Password reset requested for an unregistered email.");
+
                 return new ForgetPasswordResponseModel
                 {
                     IsSuccess = true,
@@ -54,6 +61,8 @@ namespace BussinessLayer.User.Command
                 subject,
                 body
             );
+
+            _logger.LogInformation("Password reset email sent successfully.");
 
             return new ForgetPasswordResponseModel
             {

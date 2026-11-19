@@ -48,7 +48,20 @@ namespace RepositoryLayer.Service
                     Colour = n.Colour,
                     IsArchived = n.IsArchived,
                     IsDeleted = n.IsDeleted,
-                    UserId = n.UserId
+                    UserId = n.UserId,
+                    NoteLabels = n.NoteLabels
+                    .Select(nl => new NoteLabelEntity
+                    {
+                    NoteId = nl.NoteId,
+                    LabelId = nl.LabelId,
+
+                    Label = new LabelEntity
+                    {
+                        LabelId = nl.Label.LabelId,
+                        Name = nl.Label.Name
+                    }
+                })
+                .ToList()
                 }).ToListAsync();
 
             return notes;

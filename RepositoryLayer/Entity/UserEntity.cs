@@ -25,6 +25,7 @@ namespace RepositoryLayer.Entity
         public string Password { get; set; } = string.Empty;
 
         public long PhoneNumber { get; set; }
+        public string? GoogleId { get; set; }
 
     }
 }
